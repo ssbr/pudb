@@ -6,6 +6,9 @@ import urwid
 import bdb
 import sys
 
+WINDOWS = (sys.platform == "win32")
+
+
 from pudb.settings import load_config, save_config
 CONFIG = load_config()
 save_config(CONFIG)
@@ -322,11 +325,15 @@ from pudb.ui_tools import make_hotkey_markup, labelled_value, \
 
 from pudb.var_view import FrameVarInfoKeeper
 
-
-from urwid.raw_display import Screen
+if WINDOWS:
+    from pygame_display import Screen
+else:
+    from urwid.raw_display import Screen
 
 class ThreadsafeScreen(Screen):
     "A Screen subclass that doesn't crash when running from a non-main thread."
+
+    default_window_title = 'pudb'
 
     def signal_init(self):
         "Initialize signal handler, ignoring errors silently."
